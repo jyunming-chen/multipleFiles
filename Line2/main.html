@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<style>
+#info {
+	position: absolute;
+	color:yellow;
+	top: 10px;
+	width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	text-align: center;
+	user-select: none;
+	z-index: 1; /* TODO Solve this in HTML */
+}
+
+
+</style>
+</head>
+
+<body> 
+<div id="container"></div>
+<div id="info">fat lines</div>
+
+<script type='module'>
+import * as THREE from "https://threejs.org/build/three.module.js";
+import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
+import {makeXYRectangle} from './makeFatLine.js';
+
+var renderer, scene, camera;
+var fatLines;
+
+function init() {
+
+  renderer = new THREE.WebGLRenderer({
+    antialias: true
+  });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+
+  scene.add(new THREE.GridHelper(200, 20, 'red', 'white'));
+
+  camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+  camera.position.set(0, 40, 150);
+
+  let controls = new OrbitControls(camera, renderer.domElement);
+
+  window.addEventListener('resize', onWindowResize, false);
+
+  /////////////////////////////////////////////////////////////////
+  fatLines = makeXYRectangle (30,40, [10,10], 14, 0xff00ff);
+  scene.add (fatLines);
+}
+
+function onWindowResize() {
+
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  // renderer will set this eventually
+  // resolution of the viewport
+  fatLines.material.resolution.set (window.innerWidth, window.innerHeight);
+}
+
+init();
+animate();
+
+function animate() {
+
+  requestAnimationFrame(animate);
+  renderer.render(scene, camera);
+
+}
+
+
+</script>
+</body>
+
+</html>
